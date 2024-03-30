@@ -2,7 +2,7 @@
   "name": "course",
   "version": "1.0.0",
   "description": "",
-  "main": "file.js",
+  "main": "app.js",
   "directories": {
     "doc": "doc"
   },
