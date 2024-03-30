@@ -6,10 +6,6 @@ const Blog = require("./models/blog");
 // Express app
 const app = express();
 
-// Middleware and Static files
-app.use(express.static("public"));
-app.use(morgan("dev"));
-
 // Connect to MongoDB
 const dbURL =
   "mongodb+srv://Ozioma45:Oziblink2846@nodetut.dzkjohw.mongodb.net/nodeTut?retryWrites=true&w=majority&appName=NodeTut";
@@ -23,8 +19,51 @@ const dbURL =
   }
 })();
 
+// Middleware and Static files
+app.use(express.static("public"));
+app.use(morgan("dev"));
+app.use(express.urlencoded({ extended: true }));
+
 // Register view engine
 app.set("view engine", "ejs");
+
+// mongoose & mongo tests
+app.get("/add-blog", (req, res) => {
+  const blog = new Blog({
+    title: "new blog",
+    snippet: "about my new blog",
+    body: "more about my new blog",
+  });
+
+  blog
+    .save()
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+app.get("/all-blogs", (req, res) => {
+  Blog.find()
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+app.get("/single-blog", (req, res) => {
+  Blog.findById("5ea99b49b8531f40c0fde689")
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 
 // Routes
 app.get("/", (req, res) => {
@@ -49,6 +88,19 @@ app.get("/blogs", (req, res) => {
 
 app.get("/blogs/create", (req, res) => {
   res.render("create", { title: "Create a New Blog" });
+});
+
+app.post("/blogs", (req, res) => {
+  const blog = new Blog(req.body);
+
+  blog
+    .save()
+    .then((result) => {
+      res.redirect("/blogs");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 
 // 404 page
